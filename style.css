@@ -1,0 +1,104 @@
+/* Google font applied to body */
+body {
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f0f2f5;
+  margin: 0;
+}
+
+/* Card container with perspective for 3D effect */
+.card-container {
+  perspective: 1000px; /* depth for 3D flip */
+}
+
+/* Outer card element */
+.flip-card {
+  width: 300px;
+  height: 400px;
+}
+
+/* Inner wrapper to hold front & back */
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d; /* keeps 3D effect */
+  transition: transform 0.6s ease;
+}
+
+/* Flip effect on hover */
+.flip-card:hover .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Front and back face styles */
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* hides opposite face when flipped */
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+/* Front face */
+.flip-card-front {
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip-card-front img {
+  width: 100%;
+  height: auto;
+}
+
+.flip-card-front h3 {
+  margin: 10px 0 5px;
+  font-weight: 600;
+}
+
+.flip-card-front p {
+  color: #666;
+}
+
+/* Back face */
+.flip-card-back {
+  background-color: #4a90e2;
+  color: white;
+  transform: rotateY(180deg); /* initial rotation so it shows correctly after flip */
+  padding: 20px;
+  text-align: center;
+}
+
+.flip-card-back h3 {
+  margin-top: 0;
+}
+
+.flip-card-back p {
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+/* Button style */
+.btn {
+  display: inline-block;
+  background: white;
+  color: #4a90e2;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.btn:hover {
+  background: #e6e6e6;
+}

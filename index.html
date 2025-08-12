@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>3D Flip Card — Random Image</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <main>
+    <section class="card-container">
+      <article class="flip-card">
+        <div class="flip-card-inner">
+
+          <!-- Front Face -->
+          <div class="flip-card-front">
+            <!-- Random image from Picsum (changes on reload) -->
+            <img
+              src="https://picsum.photos/300/200"
+              alt="Random image"
+              width="300"
+              height="200"
+              loading="lazy"
+            >
+            <h3>John Doe</h3>
+            <p>Web Developer</p>
+          </div>
+
+          <!-- Back Face -->
+          <div class="flip-card-back">
+            <h3>About Me</h3>
+            <p>I specialize in creating modern, responsive websites using HTML, CSS, and JavaScript. Passionate about clean design and user experience.</p>
+            <a href="#" class="btn">Learn More</a>
+          </div>
+
+        </div>
+      </article>
+    </section>
+  </main>
+
+</body>
+</html>
