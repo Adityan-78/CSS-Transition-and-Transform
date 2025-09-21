@@ -12,8 +12,12 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
-      - name: Show event (debug)
-        run: echo "event ${{ github.event_name }} for PR #${{ github.event.pull_request.number }} on ${{ github.repository }}"
+      - name: Debug context
+        shell: bash
+        run: |
+          echo "event=${{ github.event_name }}"
+          echo "repo=${{ github.repository }}"
+          echo "pr=${{ github.event.pull_request.number }}"
 
       - uses: actions/checkout@v4
 
@@ -22,18 +26,24 @@ jobs:
           python-version: '3.11'
 
       - name: Fetch agent source
+        shell: bash
         run: |
+          set -e
           git clone --depth 1 --branch main https://github.com/Adityan-78/pr-review-agent-supreme agent_src
-          echo "PYTHONPATH=$GITHUB_WORKSPACE/agent_src" >> $GITHUB_ENV
+          echo "PYTHONPATH=$GITHUB_WORKSPACE/agent_src" >> "$GITHUB_ENV"
 
       - name: Install deps
+        shell: bash
         run: |
+          set -e
           python -m pip install --upgrade pip
           pip install -r agent_src/requirements.txt
           pip install flake8 bandit pyyaml
 
       - name: Run agent
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -e
           python -m agent.cli analyze --provider github --repo "${{ github.repository }}" --pr "${{ github.event.pull_request.number }}"
