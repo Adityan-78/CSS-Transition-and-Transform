@@ -1,8 +1,8 @@
 name: PR Review
+
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-  workflow_dispatch: {}
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -12,55 +12,28 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
+      - name: Show event (debug)
+        run: echo "event ${{ github.event_name }} for PR #${{ github.event.pull_request.number }} on ${{ github.repository }}"
+
       - uses: actions/checkout@v4
-
-      # Private agent (requires secrets.AGENT_PAT in this repo)
-      - name: Fetch PR agent (private)
-        if: ${{ secrets.AGENT_PAT != '' }}
-        uses: actions/checkout@v4
-        with:
-          repository: Adityan-78/pr-review-agent-supreme
-          ref: main
-          path: pr-agent
-          token: ${{ secrets.AGENT_PAT }}
-
-      # Public agent (no token)
-      - name: Fetch PR agent (public)
-        if: ${{ secrets.AGENT_PAT == '' }}
-        uses: actions/checkout@v4
-        with:
-          repository: Adityan-78/pr-review-agent-supreme
-          ref: main
-          path: pr-agent
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      - name: Fetch agent source
+        run: |
+          git clone --depth 1 --branch main https://github.com/Adityan-78/pr-review-agent-supreme agent_src
+          echo "PYTHONPATH=$GITHUB_WORKSPACE/agent_src" >> $GITHUB_ENV
+
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          if [ -f pr-agent/requirements.txt ]; then pip install -r pr-agent/requirements.txt; fi
+          pip install -r agent_src/requirements.txt
           pip install flake8 bandit pyyaml
 
-      - name: Run agent on this PR
+      - name: Run agent
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}  # optional
-          PYTHONPATH: pr-agent
         run: |
-          python - <<'PY'
-import sys
-from agent.cli import main
-import sys as _sys
-_sys.argv = [
-  'prog','analyze',
-  '--provider','github',
-  '--repo','${{ github.repository }}',
-  '--pr', str(${{ github.event.pull_request.number }})
-]
-try:
-  main()
-except SystemExit:
-  pass
-PY
+          python -m agent.cli analyze --provider github --repo "${{ github.repository }}" --pr "${{ github.event.pull_request.number }}"
